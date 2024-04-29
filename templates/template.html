@@ -1,0 +1,280 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            margin: 5px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Data Table</h1>
+    <table>
+        <tr>
+            <th>Status</th>
+        </tr>
+        {% for item in data[0] %}
+        <tr>
+            <td>{{ item }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p>{{ data[1] }}</p>
+    <p>{{ data[2] }}</p>
+    <table>
+        <tr>
+            <th>Count</th>
+            <th>Vuln ID</th>
+            <th>Category</th>
+            <th>Due Date</th>
+        </tr>
+        {% for row in data[3:] %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h1>Due Dates Summary</h1>
+    {% set show_headers = true %}
+    <table>
+        {% for row in summary_data %}
+            {% if row|length == 6 %}
+                <tr>
+                    <td colspan="3"><h2>{{ row[0] }}</h2></td>
+                </tr>
+                <tr>
+                    <td colspan="3">{{ row[1] }} Total, {{ row[2] }} Critical, {{ row[3] }} High, {{ row[4] }} Medium, {{ row[5] }} Low</td>
+                </tr>
+                {% if show_headers %}
+                    <tr>
+                        <th>Count</th>
+                        <th>Vuln ID</th>
+                        <th>Category</th>
+                    </tr>
+                    {% set show_headers = false %}
+                {% endif %}
+            {% else %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+    <form action="/send_email" method="post">
+        <button type="submit">Send Email</button>
+    </form>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            margin: 5px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .card {
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .card p {
+            margin: 5px 0;
+        }
+        .card .highlight {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Data Table</h1>
+    <div class="card">
+        <h2>Summary Report</h2>
+        <p><span class="highlight">{{ summary_report.total_vulns }}</span> Total Vulns</p>
+        <p>
+            <span class="highlight">{{ summary_report.zoracle_count }}</span> Oracle related,
+            <span class="highlight">{{ summary_report.rehydration_count }}</span> Rehydration related,
+            <span class="highlight">{{ summary_report.ssh_count }}</span> SSH related,
+            <span class="highlight">{{ summary_report.microsoft_count }}</span> Microsoft related
+        </p>
+        <p>Past Due:</p>
+        <ul>
+            <li><span class="highlight">{{ summary_report.past_due_total }}</span> Total</li>
+            <li><span class="highlight">{{ summary_report.past_due_high }}</span> High</li>
+            <li><span class="highlight">{{ summary_report.past_due_medium }}</span> Medium</li>
+            <li><span class="highlight">{{ summary_report.past_due_low }}</span> Low</li>
+            <li><span class="highlight">{{ summary_report.past_due_without_exception }}</span> Without exception</li>
+        </ul>
+        <p>Not Past Due:</p>
+        <ul>
+            <li><span class="highlight">{{ summary_report.not_past_due_total }}</span> Total</li>
+            <li><span class="highlight">{{ summary_report.not_past_due_high }}</span> High</li>
+            <li><span class="highlight">{{ summary_report.not_past_due_medium }}</span> Medium</li>
+            <li><span class="highlight">{{ summary_report.not_past_due_low }}</span> Low</li>
+            <li><span class="highlight">{{ summary_report.not_past_due_without_exception }}</span> Without exception</li>
+        </ul>
+    </div>
+    <table>
+        <tr>
+            <th>Status</th>
+        </tr>
+        {% for item in data[0] %}
+        <tr>
+            <td>{{ item }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p>{{ data[1] }}</p>
+    <p>{{ data[2] }}</p>
+    <table>
+        <tr>
+            <th>Count</th>
+            <th>Vuln ID</th>
+            <th>Category</th>
+            <th>Due Date</th>
+        </tr>
+        {% for row in data[3:] %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h1>Due Dates Summary</h1>
+    {% set show_headers = true %}
+    <table>
+        {% for row in summary_data %}
+            {% if row|length == 6 %}
+                <tr>
+                    <td colspan="3"><h2>{{ row[0] }}</h2></td>
+                </tr>
+                <tr>
+                    <td colspan="3">{{ row[1] }} Total, {{ row[2] }} Critical, {{ row[3] }} High, {{ row[4] }} Medium, {{ row[5] }} Low</td>
+                </tr>
+                {% if show_headers %}
+                    <tr>
+                        <th>Count</th>
+                        <th>Vuln ID</th>
+                        <th>Category</th>
+                    </tr>
+                    {% set show_headers = false %}
+                {% endif %}
+            {% else %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+    <form action="/send_email" method="post">
+        <button type="submit">Send Email</button>
+    </form>
+</body>
+</html>

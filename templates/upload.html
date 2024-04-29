@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Excel File</title>
+</head>
+<body>
+    <h1>Upload Excel File</h1>
+    <form action="/display" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".xls,.xlsx" required>
+        <select name="status" required>
+            <option value="Past Due">Past Due</option>
+            <option value="Not Past Due">Not Past Due</option>
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
